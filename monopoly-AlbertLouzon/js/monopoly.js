@@ -66,8 +66,9 @@ Monopoly.updatePlayersMoney = function (player, amount) { //use this function wh
 Monopoly.checkIfBroke = function (player) {
     var playersMoney = parseInt(player.attr("data-money"));
     if (playersMoney < 0) {
-        player.addClass("removed"); //display:none + skip his turn when invoking MonopolysetNextPlayerTurn();
         var playerId = player.attr("id");
+        $("#container"+playerId).css("display","none"); //visual update
+        player.addClass("removed"); //display:none + skip his turn when invoking MonopolysetNextPlayerTurn();   
         var properties = $("." + playerId);
         if (properties.length > 0) {
             for (var i = 0; i < properties.length; i++) { //all the properties are available again.
@@ -205,7 +206,7 @@ Monopoly.handlePayRent = function (player, propertyCell) {
     popup.find("#amount-placeholder").text(currentRent);
     popup.find("button").unbind("click").bind("click", function () {
         var properyOwner = $(".player#" + properyOwnerId);
-        Monopoly.closeAndNextTurn(); // was 3 lines after
+        Monopoly.closeAndNextTurn(); 
         Monopoly.updatePlayersMoney(player, currentRent);
         Monopoly.updatePlayersMoney(properyOwner, -1 * currentRent);
         Monopoly.checkIfBroke(player);
@@ -437,11 +438,3 @@ Monopoly.showPopup = function (popupId) {
 };
 
 Monopoly.init();
-
-Monopoly.isbroke = function () { 
-    var currentPlayer = Monopoly.getCurrentPlayer();
-    if ($(currentPlayer).attr('broke') == "true") {
-        Monopoly.setNextPlayerTurn();
-        return;
-    }
-}
