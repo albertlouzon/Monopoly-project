@@ -23,6 +23,8 @@ body{
     display:none;
 }
 
+ 
+
 #containerplayer1{
     border : 2px solid #389c36;
     color:#389c36;
@@ -287,3 +289,25 @@ body{
 .removed{
    display: none;
 }
+
+.numOfHouses{
+    position: relative;
+    display:inline-block;
+    bottom:45%;
+    height:45%;
+    width: 25%;
+    background: url('http://www.clker.com/cliparts/4/U/n/E/1/I/black-white-house-hi.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+ }
+
+ .hostel{
+    position: relative;
+    display:inline-block;
+    bottom:10%;
+    height:65%;
+    width: 80%;
+    background: url('https://my.vanderbilt.edu/isde/files/2011/10/monopoly_hotel.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+ }
