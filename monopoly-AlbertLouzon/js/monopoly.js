@@ -90,8 +90,8 @@ Monopoly.checkIfBroke = function (player) {
 
 Monopoly.rollDice = function () {
     var currentPlayer = Monopoly.getCurrentPlayer(); 
-    var result1 = 4; //Randomizes the two integers that will appear on the dices
-    var result2 = 4;
+    var result1 = Math.floor((Math.random()*6)+1); //Randomizes the two integers that will appear on the dices
+    var result2 = Math.floor((Math.random()*6)+1);
     $(".dice").find(".dice-dot").css("opacity", 0);
     $(".dice#dice1").attr("data-num", result1).find(".dice-dot.num" + result1).css("opacity", 1); //display the black dots that are needed according to the 2 random numbers
     $(".dice#dice2").attr("data-num", result2).find(".dice-dot.num" + result2).css("opacity", 1);
