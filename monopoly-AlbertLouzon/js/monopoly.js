@@ -53,11 +53,13 @@ Monopoly.getPlayersMoney = function (player) {
 };
 
 Monopoly.updatePlayersMoney = function (player, amount) { //use this function when a financial transaction is mde (ex: buy, pay rent)
+    var playerId = player.attr("id"); //gets the player name for the innerText in the sideBar
     var playersMoney = parseInt(player.attr("data-money"));
     playersMoney -= amount;
     player.attr("data-money", playersMoney);
     player.attr("title", player.attr("id") + ": $" + playersMoney);
     Monopoly.playSound("chaching");
+    $("#container"+playerId).text(playerId + " : " + player.attr("data-money")+"$"); //visual update
 };
 
 //check if the data-money attribute of the current player is inferior strict to 0. If it is, we remove him from the game and his propertis are available again
@@ -88,14 +90,21 @@ Monopoly.checkIfBroke = function (player) {
 
 Monopoly.rollDice = function () {
     var currentPlayer = Monopoly.getCurrentPlayer(); 
-    var result1 = Math.floor(Math.random() * 6) + 1; //Randomizes the two integers that will appear on the dices
-    var result2 = Math.floor(Math.random() * 6) + 1;
+    var result1 = 4; //Randomizes the two integers that will appear on the dices
+    var result2 = 4;
     $(".dice").find(".dice-dot").css("opacity", 0);
     $(".dice#dice1").attr("data-num", result1).find(".dice-dot.num" + result1).css("opacity", 1); //display the black dots that are needed according to the 2 random numbers
     $(".dice#dice2").attr("data-num", result2).find(".dice-dot.num" + result2).css("opacity", 1);
     if (result1 == result2) { //if double
         Monopoly.doubleCounter++;
-    } else {
+        if(Monopoly.doubleCounter == 3){   
+             Monopoly.sendToJail(currentPlayer);    
+             Monopoly.isPlayerHome(currentPlayer);  
+            Monopoly.doubleCounter = 0;
+            Monopoly.setNextPlayerTurn();
+        }
+    } 
+    else {
         Monopoly.doubleCounter = 0;
     }
     var currentPlayer = Monopoly.getCurrentPlayer();
@@ -145,7 +154,6 @@ Monopoly.setNextPlayerTurn = function () { //remove the attribute of the current
     if (Monopoly.doubleCounter > 0 && !(currentPlayerTurn.is(".jailed") && !(currentPlayerTurn.is(".removed")))) { // here we added the case when the player has the class removed 
         nextPlayerId = playerId;
     }
-
     if (nextPlayerId > $(".player").length) {
         nextPlayerId = 1;
     }
@@ -201,7 +209,8 @@ Monopoly.handlePayRent = function (player, propertyCell) {
         Monopoly.updatePlayersMoney(player, currentRent);
         Monopoly.updatePlayersMoney(properyOwner, -1 * currentRent);
         Monopoly.checkIfBroke(player);
-
+        var playerId = player.attr("id");
+        $("#container"+playerId).text(playerId + " : " + player.attr("data-money")+"$");
     });
     Monopoly.showPopup("pay");
 };
@@ -315,6 +324,8 @@ Monopoly.handleBuy = function (player, propertyCell, propertyCost) {
             .addClass(player.attr("id"))
             .attr("data-owner", player.attr("id"))
             .attr("data-rent", rent);
+            var playerId = player.attr("id");
+        $("#container"+playerId).text(playerId + " : " + player.attr("data-money")+"$");
         Monopoly.setNextPlayerTurn();
     }
 };
@@ -328,6 +339,8 @@ Monopoly.handleAction = function (player, action, amount) {
         case "pay":
             Monopoly.updatePlayersMoney(player, amount);
             Monopoly.checkIfBroke(player);
+            var playerId = player.attr("id");
+             $("#container"+playerId).text(playerId + " : " + player.attr("data-money")+"$");
             Monopoly.setNextPlayerTurn();
             break;
         case "jail":
@@ -347,6 +360,8 @@ Monopoly.createPlayers = function (numOfPlayers) {
             player.addClass("current-turn"); //currentPlayer will be the div with the id #player1
         }
         player.attr("data-money", Monopoly.moneyAtStart); 
+        $("#containerplayer"+i).css("display","block");
+        $("#containerplayer"+i).text("player"  + i + " : " + player.attr("data-money")+"$");
     }
 };
 
@@ -365,6 +380,8 @@ Monopoly.getNextCell = function (cell) {
 Monopoly.handlePassedGo = function () {
     var player = Monopoly.getCurrentPlayer();
     Monopoly.updatePlayersMoney(player, (-1) * Monopoly.moneyAtStart / 10); //Add money to the currentPlayer
+    var playerId = player.attr("id");
+    $("#container"+playerId).text(playerId + " : " + player.attr("data-money")+"$");
 };
 
 

@@ -3,6 +3,52 @@ body{
     background-size: 200px;
 }
 
+.sideBar{
+    position: fixed;
+    display:flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: space-around;
+    right:0;
+    background-color:rgba(0,0,0,0.6);
+    padding: 0 10vh;
+    height : 100vh;
+}
+
+.playerCashContainer{
+    padding:5vh;
+    box-shadow: -3px -3px black;
+    background-color:ghostwhite; 
+    text-align: center;
+    font-size:15px;
+    display:none;
+}
+
+#containerplayer1{
+    border : 2px solid #389c36;
+    color:#389c36;
+}
+#containerplayer2{
+    border : 2px solid #364c9c;
+    color:#364c9c;
+}
+#containerplayer3{
+    border : 2px solid #d09461;
+    color:#d09461;
+}
+#containerplayer4{
+    border : 2px solid #d061cd;
+    color:#d061cd;
+}
+#containerplayer5{
+    border : 2px solid red;
+    color:red;
+}
+#containerplayer6{
+    border : 2px solid gold;
+    color:gold;
+}
+
 .board{
     height:500px;
     width:500px;
@@ -200,7 +246,7 @@ body{
     background-color: red;
 }
 .player#player6 , .player6.cell .content{
-    background-color: black;
+    background-color: gold;
 }
 
 .player.current-turn{
