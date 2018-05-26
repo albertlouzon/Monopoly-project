@@ -1,8 +1,10 @@
+
 var Monopoly = {};
 Monopoly.allowRoll = true;
-Monopoly.moneyAtStart = 400;
+Monopoly.moneyAtStart = 300;
 Monopoly.doubleCounter = 0;
 var w = 1;
+var numPlayersForWin = 0;
 
 Monopoly.init = function () { //game initialization
     $(document).ready(function () {
@@ -85,7 +87,7 @@ Monopoly.checkIfBroke = function (player) {
         var popup = Monopoly.getPopup("broke"); //display a popup instead of an alert.
         popup.find("button").unbind("click").bind("click", Monopoly.closePopup);
         Monopoly.showPopup("broke");
-
+        Monopoly.checkIfWon();
 
     }
 }
@@ -142,13 +144,14 @@ Monopoly.buyHouses = function (player) { // if the player's closest cell belongs
 }
 
 Monopoly.buildHouses = function () { //if the player can afford it, we create as much divs as the number of houses.
+    $("#price-of-houses").text("Price:")
     var playersMoneyHouse = Monopoly.getPlayersMoney(Monopoly.getCurrentPlayer());
     var propertyCellHouse = Monopoly.getPlayersCell(Monopoly.getCurrentPlayer());
     var builderPlayer = Monopoly.getCurrentPlayer();
     var numOfHouses = $("#num-of-houses").val();
     var cellGroupHouse = propertyCellHouse.attr("data-group");
     var cellPriceHouse = parseInt(cellGroupHouse.replace("group", "")) * 5;
-    var houseCost = parseInt(cellPriceHouse * 4);
+    var houseCost = parseInt(cellPriceHouse * 4)*numOfHouses;
     if (numOfHouses == 0) {
         Monopoly.closePopup();
         Monopoly.setNextPlayerTurn(Monopoly.getCurrentPlayer());
@@ -175,6 +178,8 @@ Monopoly.buildHouses = function () { //if the player can afford it, we create as
         Monopoly.setNextPlayerTurn(Monopoly.getCurrentPlayer());
     } else {
         $("#price-of-houses").text("not enough cash");
+        var noMoney2 = new Audio('./sounds/noMoneySound.mp3');
+        noMoney2.play();
         Monopoly.buyHouses()
     }
     ;
@@ -200,7 +205,11 @@ Monopoly.handleTurn = function () {
     }
     else if (playerCell.is(".available.property")) {
         Monopoly.handleBuyProperty(player, playerCell);
-    } else if (playerCell.is(".property:not(.available)") && !playerCell.hasClass(player.attr("id"))) {
+    } else if (playerCell.is(".free-parking")) {
+        Monopoly.updatePlayersMoney(player, -150);
+        Monopoly.setNextPlayerTurn();
+    }
+    else if (playerCell.is(".property:not(.available)") && !playerCell.hasClass(player.attr("id"))) {
         Monopoly.handlePayRent(player, playerCell);
     } else if (playerCell.is(".go-to-jail")) {
         Monopoly.handleGoToJail(player);
@@ -375,6 +384,7 @@ Monopoly.closeAndNextTurn = function () {
 Monopoly.initPopups = function () {
     $(".popup-page#intro").find("button").click(function () {
         var numOfPlayers = $(this).closest(".popup-page").find("input").val();
+        numPlayersForWin = $(this).closest(".popup-page").find("input").val()
         if (Monopoly.isValidInput("numofplayers", numOfPlayers)) {
             Monopoly.createPlayers(numOfPlayers);
             Monopoly.closePopup();
@@ -453,7 +463,7 @@ Monopoly.getNextCell = function (cell) {
 
 Monopoly.handlePassedGo = function () {
     var player = Monopoly.getCurrentPlayer();
-    Monopoly.updatePlayersMoney(player, (-1) * Monopoly.moneyAtStart / 10); //Add money to the currentPlayer
+    Monopoly.updatePlayersMoney(player, (-1) * Monopoly.moneyAtStart / 3); //Add money to the currentPlayer
     var playerId = player.attr("id");
     $("#container" + playerId).text(playerId + " : " + player.attr("data-money") + "$");
 };
@@ -509,5 +519,29 @@ Monopoly.showPopup = function (popupId) {
     $(".popup-lightbox .popup-page#" + popupId).show();
     $(".popup-lightbox").fadeIn();
 };
+
+Monopoly.resetGame = function(){
+    window.location.reload()
+}
+
+Monopoly.checkIfWon=function(){ //check for all the players data-money attribute. If only one player has a positive data-money attr, then its a win. 
+    var playerIndex = []
+    var playersMoney = []
+    var positiveCashCounter =0;
+    for(var i=1; i<=numPlayersForWin; i++){
+         playerIndex[i-1] = i;
+         playersMoney[i-1] = $("#player"+i).attr("data-money");
+        if(playersMoney[i-1]>=0){
+            positiveCashCounter++; //add 1 to this var for each player with a positive data-money.
+        }
+    }
+    if(positiveCashCounter==1){
+        this.allowRoll=false;
+        Monopoly.showPopup("theWin");
+        var popup = Monopoly.getPopup("theWin");
+        popup.find("button").unbind("click").bind("click", Monopoly.resetGame);
+    }
+    
+}
 
 Monopoly.init();
